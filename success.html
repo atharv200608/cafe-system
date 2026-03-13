@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Success | Cafe Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body onload="showOrderSuccess()">
+
+<header>Cafe Management System</header>
+
+<section class="menu-section">
+  <h2>✅ Order Placed Successfully!</h2>
+
+  <div class="menu-card">
+    <p id="order-id"></p>
+    <p id="amount"></p>
+    <p id="eta"></p>
+    <p id="delivery-info"></p>
+  </div>
+
+  <div class="menu-card">
+    <button onclick="trackOrder()">Track Order</button>
+    <button onclick="cancelOrder()">Cancel Order</button>
+    <button onclick="goHome()">Go to Home</button>
+    <button onclick="continueShopping()">Continue Shopping</button>
+  </div>
+</section>
+
+</body>
+</html>

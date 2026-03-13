@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment | Cafe Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body onload="loadCheckout()">
+
+<header>Cafe Management System</header>
+
+<section class="menu-section">
+  <h2>Checkout & Payment</h2>
+
+  <!-- Order Summary -->
+  <div id="order-summary" class="menu-card"></div>
+
+  <!-- Delivery Info -->
+  <div class="menu-card">
+    <h3>Delivery Info</h3>
+    <p id="d-name"></p>
+    <p id="d-phone"></p>
+    <p id="d-address"></p>
+  </div>
+
+  <!-- Payment Options -->
+  <div class="menu-card">
+    <h3>Payment Method</h3>
+    <p><input type="radio" name="pay" value="COD" checked> Cash on Delivery</p>
+    <p><input type="radio" name="pay" value="ONLINE"> Online Payment (UPI/Card/Netbanking)</p>
+  </div>
+
+  <!-- Place Order -->
+  <div class="menu-card">
+    <button onclick="placeOrder(document.querySelector('input[name=pay]:checked').value)">
+      Place Order
+    </button>
+  </div>
+
+</section>
+
+</body>
+</html>

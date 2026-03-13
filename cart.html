@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart | Cafe Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+
+<body onload="loadCart()">
+
+<header>Cafe Management System</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="food.html">Food</a>
+  <a href="drinks.html">Drinks</a>
+  <a href="dessert.html">Dessert</a>
+  <a href="cart.html">🛒 Cart</a>
+</nav>
+
+<section class="menu-section">
+  <h2 class="menu-title">🛒 Your Cart</h2>
+
+  <!-- Order Info -->
+  <p id="order-id" style="text-align:center; font-weight:bold;"></p>
+  <p style="text-align:center;">🕒 Estimated Delivery: 30–40 minutes</p>
+
+  <!-- Cart Items -->
+  <div id="cart-items"></div>
+
+  <!-- Cart Summary -->
+  <h3 id="cart-total" style="text-align:center; margin-top:20px;"></h3>
+
+  <!-- Buttons -->
+  <div style="text-align:center; margin-top:20px;">
+    <button onclick="window.location.href='food.html'">Continue Shopping</button>
+    <button onclick="goToDelivery()">Proceed to Delivery</button>
+  </div>
+</section>
+
+<footer>© 2026 Cafe Management System</footer>
+
+<script>
+function loadCart() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const container = document.getElementById("cart-items");
+  const totalDiv = document.getElementById("cart-total");
+
+  // Generate Order ID
+  let orderId = localStorage.getItem("orderId");
+  if (!orderId) {
+    orderId = "CAF-" + Math.floor(Math.random() * 1000000);
+    localStorage.setItem("orderId", orderId);
+  }
+  document.getElementById("order-id").innerText = "Order ID: " + orderId;
+
+  container.innerHTML = "";
+
+  if (cart.length === 0) {
+    container.innerHTML = "<p style='text-align:center;'>Your cart is empty.</p>";
+    totalDiv.innerText = "";
+    return;
+  }
+
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price * item.qty;
+
+    const div = document.createElement("div");
+    div.className = "menu-card";
+    div.innerHTML = `
+      <h3>${item.name}</h3>
+      <p>₹${item.price} x ${item.qty}</p>
+      <div>
+        <button onclick="changeQty(${index}, -1)">−</button>
+        <button onclick="changeQty(${index}, 1)">+</button>
+        <button onclick="removeItem(${index})">❌ Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  totalDiv.innerText = "Total Amount: ₹" + total;
+}
+
+function changeQty(index, change) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart[index].qty += change;
+
+  if (cart[index].qty < 1) {
+    cart[index].qty = 1;
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+function removeItem(index) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+function goToDelivery() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (cart.length === 0) {
+    alert("🛒 Your cart is empty!");
+    return;
+  }
+  window.location.href = "delivery.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Food | Cafe Management</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body onload="updateCartCount()">
+
+<header>Cafe Management System</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="food.html">Food</a>
+  <a href="drinks.html">Drinks</a>
+  <a href="dessert.html">Desserts</a>
+  <a href="cart.html" style="position:relative;">
+    🛒 Cart 
+    <span id="cart-count" style="
+      background:red;
+      color:white;
+      border-radius:50%;
+      padding:2px 6px;
+      font-size:12px;
+      position:absolute;
+      top:-5px;
+      right:-10px;">0</span>
+  </a>
+</nav>
+
+<section class="menu-section">
+<h2 class="menu-title">🍽 Food Menu</h2>
+
+<!-- Search Bar -->
+<div style="text-align:center; margin-bottom:20px;">
+  <input type="text" id="food-search" placeholder="Search food..." onkeyup="filterFood()" style="padding:8px; width:50%; border-radius:8px; border:1px solid #ccc;">
+</div>
+
+<div id="food-items" class="menu-grid">
+  <!-- Food items added dynamically by JS -->
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="goToCheckout()">Proceed to Checkout</button>
+</div>
+
+</section>
+
+<footer>© 2026 Cafe Management System</footer>
+
+<script>
+// Complete food list
+const foodMenu = [
+  {name:"Cheese Burger", price:120, img:"images/cheese-burger.jpg"},
+  {name:"Veg Burger", price:100, img:"images/veg-burger.jpg"},
+  {name:"Paneer Burger", price:130, img:"images/paneer-burger.jpg"},
+  {name:"Cheese Sandwich", price:110, img:"images/cheese-sandwich.jpg"},
+  {name:"Veg Sandwich", price:100, img:"images/veg-sandwich.jpg"},
+  {name:"Grilled Sandwich", price:120, img:"images/grilled-sandwich.jpg"},
+  {name:"French Fries", price:80, img:"images/french-fries.jpg"},
+  {name:"Peri Peri Fries", price:90, img:"images/peri-peri-fries.jpg"},
+  {name:"Garlic Bread", price:70, img:"images/garlic-bread.jpg"},
+  {name:"French Toast", price:140, img:"images/french-toast.jpg"},
+  {name:"Pancake", price:150, img:"images/pancake.jpg"},
+  {name:"Waffle", price:160, img:"images/waffle.jpg"}
+];
+
+// Display food items
+function displayFood(items){
+  const foodDiv = document.getElementById("food-items");
+  foodDiv.innerHTML = "";
+  items.forEach(item=>{
+    const div = document.createElement("div");
+    div.classList.add("menu-card");
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <h3>${item.name}</h3>
+      <p>Price: ₹${item.price}</p>
+      <label>Qty: <input type="number" id="qty-${item.name.replace(/\s/g,'-').toLowerCase()}" value="1" min="1" style="width:50px;"></label>
+      <button onclick="addItemToCart('${item.name}',${item.price},'qty-${item.name.replace(/\s/g,'-').toLowerCase()}')">Add to Cart</button>
+    `;
+    foodDiv.appendChild(div);
+  });
+}
+
+// Filter food items by search
+function filterFood(){
+  const query = document.getElementById("food-search").value.toLowerCase();
+  const filtered = foodMenu.filter(item=> item.name.toLowerCase().includes(query));
+  displayFood(filtered);
+}
+
+// Initial display
+displayFood(foodMenu);
+
+// Add item to cart with quantity
+function addItemToCart(name, price, qtyId){
+  const qtyInput = document.getElementById(qtyId);
+  let qty = parseInt(qtyInput.value);
+  if(qty < 1) qty = 1;
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const index = cart.findIndex(item => item.name === name);
+  if(index !== -1){
+    cart[index].qty += qty;
+  } else {
+    cart.push({name: name, price: price, qty: qty});
+  }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  alert(`${name} x${qty} added to cart ✅`);
+}
+
+// Update cart count badge
+function updateCartCount(){
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const countEl = document.getElementById("cart-count");
+  const totalQty = cart.reduce((sum,item)=> sum+item.qty,0);
+  countEl.innerText = totalQty;
+}
+
+// Go to checkout only if cart has items
+function goToCheckout(){
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if(cart.length === 0){
+    alert("Cart is empty! Add items first.");
+    return;
+  }
+  window.location.href = "cart.html";
+}
+</script>
+
+</body>
+</html>

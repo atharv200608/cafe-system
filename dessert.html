@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Desserts | Cafe Management</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body onload="updateCartCount()">
+
+<header>Cafe Management System</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="food.html">Food</a>
+  <a href="drinks.html">Drinks</a>
+  <a href="dessert.html">Desserts</a>
+  <a href="cart.html" style="position:relative;">
+    🛒 Cart 
+    <span id="cart-count" style="
+      background:red;
+      color:white;
+      border-radius:50%;
+      padding:2px 6px;
+      font-size:12px;
+      position:absolute;
+      top:-5px;
+      right:-10px;">0</span>
+  </a>
+</nav>
+
+<section class="menu-section">
+<h2 class="menu-title">🍰 Desserts Menu</h2>
+
+<!-- Search Bar -->
+<div style="text-align:center; margin-bottom:20px;">
+  <input type="text" id="dessert-search" placeholder="Search desserts..." onkeyup="filterDesserts()" style="padding:8px; width:50%; border-radius:8px; border:1px solid #ccc;">
+</div>
+
+<div id="dessert-items" class="menu-grid"></div>
+
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="goToCheckout()">Proceed to Checkout</button>
+</div>
+
+</section>
+
+<footer>© 2026 Cafe Management System</footer>
+
+<script>
+// Dessert list
+const dessertMenu = [
+  {name:"Butter Toast", price:80, img:"images/butter-toast.jpg"},
+  {name:"Cheese Burger", price:150, img:"images/cheese-burger.jpg"},
+  {name:"Cheese Sandwich", price:120, img:"images/cheese-sandwich.jpg"},
+  {name:"Chocolate Fudge", price:140, img:"images/chocolate-fudge.jpg"},
+  {name:"Chocolate Pastry", price:160, img:"images/chocolate-pastry.jpg"},
+  {name:"Chocolate Truffle", price:180, img:"images/chocolate-truffle.jpg"},
+  {name:"Croissant", price:100, img:"images/croissant.jpg"},
+  {name:"Cupcake", price:90, img:"images/cupcake.jpg"},
+  {name:"Donut", price:80, img:"images/donut.jpg"},
+  {name:"Pancake", price:120, img:"images/pancake.jpg"},
+  {name:"Strawberry Milkshake", price:150, img:"images/strawberry-milkshake.jpg"},
+  {name:"Vanilla Milkshake", price:150, img:"images/vanilla-milkshake.jpg"},
+  {name:"Waffle", price:160, img:"images/waffle.jpg"}
+];
+
+// Display desserts
+function displayDesserts(items){
+  const div = document.getElementById("dessert-items");
+  div.innerHTML = "";
+  items.forEach(item=>{
+    const card = document.createElement("div");
+    card.classList.add("menu-card");
+    card.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <h3>${item.name}</h3>
+      <p>Price: ₹${item.price}</p>
+      <label>Qty: <input type="number" id="qty-${item.name.replace(/\s/g,'-').toLowerCase()}" value="1" min="1" style="width:50px;"></label>
+      <button onclick="addItemToCart('${item.name}',${item.price},'qty-${item.name.replace(/\s/g,'-').toLowerCase()}')">Add to Cart</button>
+    `;
+    div.appendChild(card);
+  });
+}
+
+// Filter desserts
+function filterDesserts(){
+  const query = document.getElementById("dessert-search").value.toLowerCase();
+  const filtered = dessertMenu.filter(item=> item.name.toLowerCase().includes(query));
+  displayDesserts(filtered);
+}
+
+// Initial display
+displayDesserts(dessertMenu);
+
+// Add to cart
+function addItemToCart(name, price, qtyId){
+  const qtyInput = document.getElementById(qtyId);
+  let qty = parseInt(qtyInput.value);
+  if(qty<1) qty=1;
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const index = cart.findIndex(item => item.name===name);
+  if(index!==-1) cart[index].qty += qty;
+  else cart.push({name:name, price:price, qty:qty});
+  
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  alert(`${name} x${qty} added to cart ✅`);
+}
+
+// Update cart badge
+function updateCartCount(){
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const total = cart.reduce((sum,item)=>sum+item.qty,0);
+  document.getElementById("cart-count").innerText = total;
+}
+
+// Proceed to checkout
+function goToCheckout(){
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if(cart.length===0){ alert("Cart is empty! Add items first."); return;}
+  window.location.href="cart.html";
+}
+</script>
+
+</body>
+</html>
